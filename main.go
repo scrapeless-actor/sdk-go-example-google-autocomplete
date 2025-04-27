@@ -76,10 +76,12 @@ func doCrawl(actor *scrapeless.Actor, client *http.Client) {
 	req.Header.Set("x-browser-channel", "stable")
 	req.Header.Set("x-browser-year", "2025")
 	if err != nil {
+		log.Error(err)
 		panic(err)
 	}
 	do, err := client.Do(req)
 	if err != nil {
+		log.Error(err)
 		panic(err)
 	}
 	body, _ := io.ReadAll(do.Body)
@@ -89,6 +91,8 @@ func doCrawl(actor *scrapeless.Actor, client *http.Client) {
 		panic(err)
 	}
 	log.Info("success, objectId:", objectId)
+	get, _ := actor.Storage.GetObject().Get(context.TODO(), objectId)
+	log.Info(string(get))
 	if err := actor.Storage.GetQueue().Ack(context.TODO(), queueResp[0].ID); err != nil {
 		log.Error(err)
 	}
